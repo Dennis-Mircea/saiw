@@ -118,11 +118,17 @@ def show_webcam() :
     predictor_landmarks  = dlib.shape_predictor("Models/face_landmarks.dat")
     
     #Lancer la capture video
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture("/home/osboxes/Downloads/Datasets/Videos/Videos/Test/1/R_V_Mac.mp4")
+    fps = video_capture.get(cv2.CAP_PROP_FPS)
+    size = (int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)),int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    videoWriter = cv2.VideoWriter("./video/result.avi",cv2.VideoWriter_fourcc('X','V','I','D'),fps,size)
 
     while True:
         # Capture frame-by-frame
         ret, frame = video_capture.read()
+
+        if not ret:
+            break
         
         face_index = 0
         
@@ -225,6 +231,8 @@ def show_webcam() :
             ebl = shape[eblStart:eblEnd]
             eblHull = cv2.convexHull(ebl)
             cv2.drawContours(frame, [eblHull], -1, (0, 255, 0), 1)
+
+            videoWriter.write(frame)
         
         cv2.putText(frame,'Number of Faces : ' + str(len(rects)),(40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, 155, 1)
         cv2.imshow('Video', frame)
